@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡單記帳本</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 8px;
+            margin: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .income {
+            color: green;
+        }
+        .expense {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>簡單記帳本</h1>
+        
+        <div class="input-group">
+            <select id="type">
+                <option value="income">收入</option>
+                <option value="expense">支出</option>
+            </select>
+            <input type="number" id="amount" placeholder="金額" step="0.01">
+            <input type="text" id="description" placeholder="描述">
+            <button onclick="addRecord()">新增記錄</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>類型</th>
+                    <th>金額</th>
+                    <th>描述</th>
+                    <th>日期</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="records">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        let records = [];
+
+        function addRecord() {
+            const type = document.getElementById('type').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const description = document.getElementById('description').value;
+            const date = new Date().toLocaleString('zh-TW');
+
+            if (!amount || !description) {
+                alert('請填寫金額和描述');
+                return;
+            }
+
+            const record = { type, amount, description, date };
+            records.push(record);
+            updateTable();
+
+            // 清空輸入欄
+            document.getElementById('amount').value = '';
+            document.getElementById('description').value = '';
+        }
+
+        function deleteRecord(index) {
+            records.splice(index, 1);
+            updateTable();
+        }
+
+        function updateTable() {
+            const tbody = document.getElementById('records');
+            tbody.innerHTML = '';
+
+            records.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.type === 'income' ? '收入' : '支出'}</td>
+                    <td class="${record.type}">${record.amount.toFixed(2)}</td>
+                    <td>${record.description}</td>
+                    <td>${record.date}</td>
+                    <td><button onclick="deleteRecord(${index})">刪除</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
